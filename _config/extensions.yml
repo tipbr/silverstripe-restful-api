@@ -3,6 +3,6 @@ Name: tipbr-sra-extensions
 After:
   - '#coreextensions'
 ---
-SilverStripe\Admin\SecurityAdmin:
+SilverStripe\Security\Member:
   extensions:
     - TipBr\Extensions\MemberExtension

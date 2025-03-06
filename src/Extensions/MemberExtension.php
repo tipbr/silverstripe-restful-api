@@ -2,28 +2,28 @@
 
 namespace TipBr\Extensions;
 
-use SilverStripe\Security\Member;
+use SilverStripe\Core\Extension;
+use SilverStripe\Forms\FieldList;
 use TipBr\DataObjects\PasswordResetRequest;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
-use SilverStripe\Core\Extension;
 
-class ClubMemberExtension extends Extension
+class MemberExtension extends Extension
 {
     private static $has_many = [
         'PasswordResetRequests' => PasswordResetRequest::class
     ];
 
-    // public function getCMSFields()
-    // {
-    //     $fields = parent::getCMSFields();
-    //     $fields->addFieldToTab('Root.PasswordResetRequests', GridField::create(
-    //         'PasswordResetRequests',
-    //         'Password Reset Requests',
-    //         $this->PasswordResetRequests(),
-    //         GridFieldConfig_RecordEditor::create()
-    //     ));
+    public function updateCMSFields(FieldList $fields)
+    {
 
-    //     return $fields;
-    // }
+        $fields->addFieldToTab('Root.PasswordResetRequests', GridField::create(
+            'PasswordResetRequests',
+            'Password Reset Codes',
+            $this->owner->PasswordResetRequests(),
+            GridFieldConfig_RecordEditor::create()
+        ));
+
+        return $fields;
+    }
 }
