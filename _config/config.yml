@@ -1,1 +1,12 @@
-# see https://docs.silverstripe.org/en/developer_guides/configuration/configuration/
+---
+Name: restful-config
+---
+Level51\JWTUtils\JWTUtils:
+  lifetime_in_days: 365
+  renew_threshold_in_minutes: 60
+
+SilverStripe\Core\Injector\Injector:
+  SilverStripe\Control\Middleware\CanonicalURLMiddleware:
+    properties:
+      enforceTrailingSlashConfigIgnorePaths:
+        - 'api/'

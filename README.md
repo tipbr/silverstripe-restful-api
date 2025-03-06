@@ -2,18 +2,35 @@
 
 This module provides a very basic RESTful API for Silverstripe CMS. It is intended to be used with a decoupled frontend, such as a React app.
 
-A useful skeleton to more easily create a [Silverstripe CMS Module](https://docs.silverstripe.org/en/developer_guides/extending/modules/) that conform to the
-[Module Standard](https://docs.silverstripe.org/en/developer_guides/extending/modules/#module-standard).
+## Configuration
 
-This README contains descriptions of the parts of this module base you should customise to meet you own module needs.
-For example, the module name in the H1 above should be you own module name, and the description text you are reading now
-is where you should provide a good short explanation of what your module does.
+Set the following configuration:
 
-Where possible we have included default text that can be included as is into your module and indicated in
-other places where you need to customise it
+```yaml
+---
+Name: app-restful-config
+After:
+    - "restful-config"
+---
+Level51\JWTUtils\JWTUtils:
+    secret: "your-super-secret-key"
+```
 
-Below is a template of the sections of your `README.md` you should ideally include to met the Module Standard
-and help others make use of your modules.
+Then set your auth route wherever you'd like:
+
+```yaml
+SilverStripe\Control\Director:
+    rules:
+        "api/v1/auth/$Action": 'TipBr\Controllers\AuthApiController'
+```
+
+## UUID
+
+```php
+private static $extensions = [
+    UUIDExtension::class
+];
+```
 
 ## Features
 
