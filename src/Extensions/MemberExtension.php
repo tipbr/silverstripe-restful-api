@@ -16,8 +16,7 @@ class MemberExtension extends Extension
 
     public function updateCMSFields(FieldList $fields)
     {
-
-        $fields->addFieldToTab('Root.PasswordResetRequests', GridField::create(
+        $fields->addFieldToTab('Root.PasswordResetCodes', GridField::create(
             'PasswordResetRequests',
             'Password Reset Codes',
             $this->owner->PasswordResetRequests(),
