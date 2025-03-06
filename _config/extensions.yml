@@ -5,4 +5,4 @@ After:
 ---
 SilverStripe\Admin\SecurityAdmin:
   extensions:
-    - TipBr\Extensions\PasswordResetSecurityExtension
+    - TipBr\Extensions\SecurityAdminExtension
