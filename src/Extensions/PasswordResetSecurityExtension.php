@@ -37,6 +37,9 @@ class PasswordResetSecurityExtension extends Extension
             $gridFieldConfig
         );
 
+        // Associate the gridfield with the form
+        $gridField->setForm($form);
+
         // Add the gridfield to the tab
         $resetRequestsTab->push($gridField);
 
