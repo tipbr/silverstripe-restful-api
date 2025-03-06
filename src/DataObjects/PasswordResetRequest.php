@@ -29,6 +29,8 @@ class PasswordResetRequest extends DataObject
         "ExpiryStatus" => "Status"
     ];
 
+    private static $default_sort = "Created DESC";
+
     // make the fields all readoly
     public function getCMSFields()
     {

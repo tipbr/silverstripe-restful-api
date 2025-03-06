@@ -6,8 +6,9 @@ use SilverStripe\Security\Member;
 use TipBr\DataObjects\PasswordResetRequest;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
+use SilverStripe\Core\Extension;
 
-class MemberExtension extends Member
+class ClubMemberExtension extends Extension
 {
     private static $has_many = [
         'PasswordResetRequests' => PasswordResetRequest::class
