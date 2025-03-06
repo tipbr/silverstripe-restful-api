@@ -5,4 +5,4 @@ After:
 ---
 SilverStripe\Admin\SecurityAdmin:
   extensions:
-    - TipBr\Extensions\SecurityAdminExtension
+    - TipBr\Extensions\MemberExtension
