@@ -16,6 +16,14 @@ Level51\JWTUtils\JWTUtils:
     secret: "your-super-secret-key"
 ```
 
+We also set some other defaults which can be overridden in your project's config:
+
+```yaml
+Level51\JWTUtils\JWTUtils:
+    lifetime_in_days: 365
+    renew_threshold_in_minutes: 60
+```
+
 Then set your auth route wherever you'd like:
 
 ```yaml
