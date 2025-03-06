@@ -4,9 +4,10 @@ namespace TipBr\Controllers;
 
 use SilverStripe\Security\Group;
 use SilverStripe\Security\Member;
-use TaskScribe\DataObjects\PasswordResetRequest;
+use TipBr\DataObjects\PasswordResetRequest;
 use FullscreenInteractive\Restful\Controllers\AuthController;
 
+// TODO: User group should be configurable?
 class AuthApiController extends AuthController
 {
     private static $allowed_actions = [
@@ -19,6 +20,7 @@ class AuthApiController extends AuthController
     /**
      * Register a new user
      */
+    // TODO: accept extra fields for the member
     public function register()
     {
         $this->ensurePOST();
@@ -33,13 +35,13 @@ class AuthApiController extends AuthController
             return $this->httpError(201, 'Member already exists');
         }
 
-        // create a new group "app-users" and assign the user to it
-        $group = Group::get()->filter('Code', 'app-users')->first();
+        // create a new group "api-users" and assign the user to it
+        $group = Group::get()->filter('Code', 'api-users')->first();
 
         if (!$group) {
             $group = Group::create();
-            $group->Code = 'app-users';
-            $group->Title = 'App Users';
+            $group->Code = 'api-users';
+            $group->Title = 'Api Users';
             $group->write();
         }
 

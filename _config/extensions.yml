@@ -1,0 +1,8 @@
+---
+Name: tipbr-sra-extensions
+After:
+  - '#coreextensions'
+---
+SilverStripe\Admin\SecurityAdmin:
+  extensions:
+    - TipBr\Extensions\PasswordResetSecurityExtension

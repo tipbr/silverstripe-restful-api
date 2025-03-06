@@ -1,5 +1,5 @@
 ---
-Name: restful-config
+Name: tipbr-sra-config
 ---
 Level51\JWTUtils\JWTUtils:
   lifetime_in_days: 365

@@ -2,6 +2,12 @@
 
 This module provides a very basic RESTful API for Silverstripe CMS. It is intended to be used with a decoupled frontend, such as a React app.
 
+## Installation
+
+```bash
+composer require tipbr/silverstripe-restful-api
+```
+
 ## Configuration
 
 Set the following configuration:
