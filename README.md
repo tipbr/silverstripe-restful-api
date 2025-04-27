@@ -7,16 +7,16 @@ This module provides a very basic RESTful API for Silverstripe CMS. It is intend
 composer.json:
 
 ```php
-    "require": {
-        "tipbr/silverstripe-restful-api": "dev-main"
-    }
-    ...
     "repositories": [
         {
             "type": "vcs",
             "url": "https://github.com/tipbr/silverstripe-restful-api.git"
         }
     ]
+```
+
+```bash
+composer require tipbr/silverstripe-restful-api:dev-main
 ```
 
 ## Configuration
