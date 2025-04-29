@@ -46,7 +46,7 @@ Then set your auth route wherever you'd like:
 ```yaml
 SilverStripe\Control\Director:
     rules:
-        "api/v1/auth/$Action": 'TipBr\Controllers\AuthApiController'
+        "api/v1/auth//$Action": 'TipBr\Controllers\AuthApiController'
 ```
 
 ## UUID
