@@ -19,16 +19,18 @@ composer require fullscreeninteractive/silverstripe-restful-helpers
 ## Usage
 
 If you plan on using Authenication for your API then you first need to config
-the [https://github.com/Level51/silverstripe-jwt-utils/](JWTUtils) module.
+the JWT utilities.
 
 _app/\_config/api.yml_
 
 ```yml
-Level51\JWTUtils\JWTUtils:
-  secret: 'replace-this-with-a-jwt-secret-for-jwt'
-  lifetime_in_days: 365
+FullscreenInteractive\Restful\JWT\JWTUtils:
+  secret: '`JWT_SECRET`'  # Use environment variable for security
+  lifetime_in_days: 7     # Access token lifetime
   renew_threshold_in_minutes: 60
 ```
+
+Make sure to set a `JWT_SECRET` environment variable with a secure random string.
 
 Next step is to setup the routing for the API. You can modify the name of the
 routes as required for the project. At the very least you would have a
@@ -174,12 +176,13 @@ fetch('/api/v1/auth/token', {
 ```
 
 The response from that request with either be an error code (> 200) or if user
-and password is correct, a 200 response containing the JWT. The token and
-related meta data can be saved securely client side for reuse.
+and password is correct, a 200 response containing the JWT access token and refresh token.
+The tokens and related meta data can be saved securely client side for reuse.
 
 ```js
 {
     "token": "eyJ0eXAiOiJKV1QiL...",
+    "refreshToken": "a1b2c3d4-...",
     "member": {
         "id": 1,
         "email": "js@lvl51.de",
@@ -189,8 +192,11 @@ related meta data can be saved securely client side for reuse.
 }
 ```
 
-If a user's token is invalid, or expired a *401* error will be returned. To
-validate a users token use the `verify` endpoint - this will check the token and
+The access token (`token`) is short-lived and used for API authentication. The refresh token
+(`refreshToken`) is long-lived and used to obtain new access tokens without re-authenticating.
+
+If a user's access token is invalid or expired, a *401* error will be returned. To
+validate a user's token, use the `verify` endpoint - this will check the token and
 renew the token if required.
 
 ```js
@@ -203,6 +209,23 @@ fetch('/api/v1/auth/verify', {
     },
 })
 ```
+
+To refresh an expired access token using the refresh token:
+
+```js
+fetch('/api/v1/auth/refresh', {
+    method: "POST",
+    headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+        refreshToken: refreshToken
+    })
+})
+```
+
+This will return a new access token with the same refresh token.
 
 The token can then be used to sign API calls as the `Bearer` header.
 
