@@ -13,7 +13,7 @@ developers to design the API layout (although scaffolding helpers are available)
 ## Installation
 
 ```
-composer require fullscreeninteractive/silverstripe-restful-helpers
+composer require tipbr/silverstripe-restful-helpers
 ```
 
 ## Usage
