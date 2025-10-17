@@ -13,13 +13,13 @@ developers to design the API layout (although scaffolding helpers are available)
 ## Installation
 
 ```
-composer require fullscreeninteractive/silverstripe-restful-helpers
+composer require tipbr/silverstripe-restful-helpers
 ```
 
 ## Usage
 
 If you plan on using Authenication for your API then you first need to config
-the [https://github.com/Level51/silverstripe-jwt-utils/](JWTUtils) module.
+the [JWTUtils](https://github.com/Level51/silverstripe-jwt-utils/) module.
 
 _app/\_config/api.yml_
 
