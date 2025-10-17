@@ -1,6 +1,6 @@
 # Code Review: SilverStripe RESTful API Module
 
-**Reviewed Date:** October 2025  
+**Reviewed Date:** October 2024  
 **Module Version:** 2.x-dev  
 **Purpose:** Simple, flexible helpers for RESTful features targeting mobile applications with JWT authentication
 
@@ -1117,4 +1117,4 @@ This module provides a solid foundation for RESTful API development in SilverStr
 
 ---
 
-*This review was conducted in October 2025. Module version: 2.x-dev*
+*This review was conducted in October 2024. Module version: 2.x-dev*
