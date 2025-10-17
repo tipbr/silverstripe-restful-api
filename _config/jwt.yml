@@ -1,7 +1,7 @@
 ---
 Name: restful-jwt-config
 ---
-FullscreenInteractive\Restful\JWT\JWTUtils:
+TipBr\RestfulApi\JWT\JWTUtils:
   secret: '`JWT_SECRET`'
   lifetime_in_days: 7
   renew_threshold_in_minutes: 60

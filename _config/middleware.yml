@@ -1,0 +1,10 @@
+---
+Name: restful-middleware
+After: '#coreMiddleware'
+---
+SilverStripe\Core\Injector\Injector:
+  SilverStripe\Control\Director:
+    properties:
+      Middlewares:
+        CorsMiddleware: '%$TipBr\RestfulApi\Middleware\CorsMiddleware'
+        JsonMiddleware: '%$TipBr\RestfulApi\Middleware\JsonMiddleware'

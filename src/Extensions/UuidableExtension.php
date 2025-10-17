@@ -1,6 +1,6 @@
 <?php
 
-namespace FullscreenInteractive\Restful\Extensions;
+namespace TipBr\RestfulApi\Extensions;
 
 use Ramsey\Uuid\Uuid;
 use SilverStripe\Core\Extension;

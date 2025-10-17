@@ -1,10 +1,10 @@
 <?php
 
-namespace FullscreenInteractive\Restful\Controllers;
+namespace TipBr\RestfulApi\Controllers;
 
-use FullscreenInteractive\Restful\JWT\JWTUtils;
-use FullscreenInteractive\Restful\JWT\JWTUtilsException;
-use FullscreenInteractive\Restful\Models\RefreshToken;
+use TipBr\RestfulApi\JWT\JWTUtils;
+use TipBr\RestfulApi\JWT\JWTUtilsException;
+use TipBr\RestfulApi\Models\RefreshToken;
 use SilverStripe\Model\ArrayData;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
@@ -27,28 +27,30 @@ class AuthController extends ApiController
         try {
             $payload = JWTUtils::inst()->byBasicAuth($this->request, true);
 
-            if (isset($payload['member']['id'])) {
+            // Get member by UUID if available, fallback to ID
+            $member = null;
+            if (isset($payload['member']['uuid'])) {
+                $member = Member::get()->filter('UUID', $payload['member']['uuid'])->first();
+            } elseif (isset($payload['member']['id'])) {
                 $member = Member::get()->byID($payload['member']['id']);
+            }
 
-                if ($member) {
-                    $api = [];
+            if ($member) {
+                $api = [];
 
-                    if ($member->hasMethod('toApi')) {
-                        $api = $member->toApi() ?? [];
+                if ($member->hasMethod('toApi')) {
+                    $api = $member->toApi() ?? [];
 
-                        if ($api instanceof ArrayData) {
-                            $api = $api->toMap();
-                        }
+                    if ($api instanceof ArrayData) {
+                        $api = $api->toMap();
                     }
-
-                    $payload['member'] = array_merge($payload['member'], $api);
-
-                    // Generate refresh token
-                    $refreshToken = RefreshToken::generate($member);
-                    $payload['refreshToken'] = $refreshToken->Token;
                 }
 
-                return $this->returnArray($payload);
+                $payload['member'] = array_merge($payload['member'], $api);
+
+                // Generate refresh token
+                $refreshToken = RefreshToken::generate($member);
+                $payload['refreshToken'] = $refreshToken->Token;
             }
 
             return $this->returnArray($payload);
@@ -75,13 +77,13 @@ class AuthController extends ApiController
     }
 
     /**
-     * Refresh access token using refresh token
+     * Refresh access token using refresh token - implements token rotation
      */
     public function refresh()
     {
         $this->ensurePOST();
 
-        $refreshTokenValue = $this->getVar('refreshToken');
+        $refreshTokenValue = $this->getVar('refreshToken', FILTER_SANITIZE_STRING);
 
         if (!$refreshTokenValue) {
             return $this->httpError(400, 'Missing refresh token');
@@ -112,8 +114,12 @@ class AuthController extends ApiController
             $payload['member'] = array_merge($payload['member'], $api);
         }
 
-        // Keep the same refresh token
-        $payload['refreshToken'] = $refreshTokenValue;
+        // TOKEN ROTATION: Revoke old refresh token
+        $refreshToken->revoke();
+
+        // Generate NEW refresh token
+        $newRefreshToken = RefreshToken::generate($member);
+        $payload['refreshToken'] = $newRefreshToken->Token;
 
         return $this->returnArray($payload);
     }

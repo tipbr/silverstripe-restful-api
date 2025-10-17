@@ -1,6 +1,6 @@
 <?php
 
-namespace FullscreenInteractive\Restful\JWT;
+namespace TipBr\RestfulApi\JWT;
 
 class JWTUtilsException extends \Exception
 {
