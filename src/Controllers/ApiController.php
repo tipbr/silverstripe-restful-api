@@ -7,7 +7,7 @@ namespace FullscreenInteractive\Restful\Controllers;
 use ArrayAccess;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-use Level51\JWTUtils\JWTUtils;
+use FullscreenInteractive\Restful\JWT\JWTUtils;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Control\HTTPResponse_Exception;
