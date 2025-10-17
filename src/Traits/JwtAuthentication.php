@@ -1,10 +1,10 @@
 <?php
 
-namespace FullscreenInteractive\Restful\Traits;
+namespace TipBr\RestfulApi\Traits;
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-use FullscreenInteractive\Restful\JWT\JWTUtils;
+use TipBr\RestfulApi\JWT\JWTUtils;
 use SilverStripe\Control\HTTPResponse_Exception;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;

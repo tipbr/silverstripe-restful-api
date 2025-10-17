@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace FullscreenInteractive\Restful\Controllers;
+namespace TipBr\RestfulApi\Controllers;
 
-use FullscreenInteractive\Restful\Traits\InputValidation;
-use FullscreenInteractive\Restful\Traits\JsonResponse;
-use FullscreenInteractive\Restful\Traits\JwtAuthentication;
+use TipBr\RestfulApi\Traits\InputValidation;
+use TipBr\RestfulApi\Traits\JsonResponse;
+use TipBr\RestfulApi\Traits\JwtAuthentication;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Control\HTTPResponse_Exception;
@@ -16,13 +16,6 @@ class ApiController extends Controller
     use JwtAuthentication;
     use JsonResponse;
     use InputValidation;
-
-    /**
-     * Configuration for public actions that don't require authentication
-     *
-     * @var array
-     */
-    private static $public_actions = [];
 
     public function init()
     {
@@ -90,18 +83,6 @@ class ApiController extends Controller
     public function index()
     {
         return $this->httpError(400, 'Bad Request');
-    }
-
-    /**
-     * Check if the current action is public (doesn't require authentication)
-     *
-     * @param string $action
-     * @return bool
-     */
-    protected function isPublicAction(string $action): bool
-    {
-        $publicActions = $this->config()->get('public_actions');
-        return is_array($publicActions) && in_array($action, $publicActions);
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace FullscreenInteractive\Restful\Middleware;
+namespace TipBr\RestfulApi\Middleware;
 
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;

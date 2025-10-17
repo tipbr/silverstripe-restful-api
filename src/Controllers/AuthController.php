@@ -1,10 +1,10 @@
 <?php
 
-namespace FullscreenInteractive\Restful\Controllers;
+namespace TipBr\RestfulApi\Controllers;
 
-use FullscreenInteractive\Restful\JWT\JWTUtils;
-use FullscreenInteractive\Restful\JWT\JWTUtilsException;
-use FullscreenInteractive\Restful\Models\RefreshToken;
+use TipBr\RestfulApi\JWT\JWTUtils;
+use TipBr\RestfulApi\JWT\JWTUtilsException;
+use TipBr\RestfulApi\Models\RefreshToken;
 use SilverStripe\Model\ArrayData;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;

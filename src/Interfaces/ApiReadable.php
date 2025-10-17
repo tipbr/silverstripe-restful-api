@@ -1,6 +1,6 @@
 <?php
 
-namespace FullscreenInteractive\Restful\Interfaces;
+namespace TipBr\RestfulApi\Interfaces;
 
 interface ApiReadable
 {

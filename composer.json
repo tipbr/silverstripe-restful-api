@@ -1,12 +1,12 @@
 {
-  "name": "tipbr/silverstripe-restful-helpers",
+  "name": "tipbr/silverstripe-restful-api",
   "type": "silverstripe-vendormodule",
   "keywords": [
     "silverstripe",
     "restful",
     "api"
   ],
-  "homepage": "https://github.com/tipbr/silverstripe-restful-helpers",
+  "homepage": "https://github.com/tipbr/silverstripe-restful-api",
   "license": "BSD-3-Clause",
   "authors": [
     {
@@ -27,7 +27,7 @@
   },
   "autoload": {
     "psr-4": {
-      "FullscreenInteractive\\Restful\\": "src/"
+      "TipBr\\RestfulApi\\": "src/"
     }
   },
   "prefer-stable": true,

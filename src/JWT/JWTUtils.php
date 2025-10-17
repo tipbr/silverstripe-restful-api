@@ -1,6 +1,6 @@
 <?php
 
-namespace FullscreenInteractive\Restful\JWT;
+namespace TipBr\RestfulApi\JWT;
 
 use Carbon\Carbon;
 use Firebase\JWT\JWT;

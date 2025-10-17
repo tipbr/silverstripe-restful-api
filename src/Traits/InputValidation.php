@@ -1,6 +1,6 @@
 <?php
 
-namespace FullscreenInteractive\Restful\Traits;
+namespace TipBr\RestfulApi\Traits;
 
 use SilverStripe\Control\HTTPResponse_Exception;
 

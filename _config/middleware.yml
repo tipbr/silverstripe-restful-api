@@ -6,5 +6,5 @@ SilverStripe\Core\Injector\Injector:
   SilverStripe\Control\Director:
     properties:
       Middlewares:
-        CorsMiddleware: '%$FullscreenInteractive\Restful\Middleware\CorsMiddleware'
-        JsonMiddleware: '%$FullscreenInteractive\Restful\Middleware\JsonMiddleware'
+        CorsMiddleware: '%$TipBr\RestfulApi\Middleware\CorsMiddleware'
+        JsonMiddleware: '%$TipBr\RestfulApi\Middleware\JsonMiddleware'

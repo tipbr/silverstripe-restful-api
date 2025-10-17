@@ -1,8 +1,8 @@
 <?php
 
-namespace FullscreenInteractive\Restful\Extensions;
+namespace TipBr\RestfulApi\Extensions;
 
-use FullscreenInteractive\Restful\Traits\Uuidable;
+use TipBr\RestfulApi\Traits\Uuidable;
 use SilverStripe\ORM\DataExtension;
 
 /**

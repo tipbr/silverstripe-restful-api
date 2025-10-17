@@ -1,6 +1,6 @@
 <?php
 
-namespace FullscreenInteractive\Restful\Models;
+namespace TipBr\RestfulApi\Models;
 
 use Ramsey\Uuid\Uuid;
 use SilverStripe\ORM\DataObject;
