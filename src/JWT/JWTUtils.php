@@ -147,11 +147,18 @@ class JWTUtils
      */
     public function forMember($member, $includeMemberData = true)
     {
-        // Create JWT with all claims
+        // Create JWT with all claims using UUID instead of ID
+        $claims = [
+            'memberId' => $member->ID, // Keep for backwards compatibility
+        ];
+
+        // Use UUID if available
+        if ($member->hasField('UUID') && $member->UUID) {
+            $claims['memberUuid'] = $member->UUID;
+        }
+
         $token = JWT::encode(
-            array_merge([
-                'memberId' => $member->ID
-            ], $this->getClaims()),
+            array_merge($claims, $this->getClaims()),
             Config::inst()->get(self::class, 'secret'),
             'HS256'
         );
@@ -162,12 +169,20 @@ class JWTUtils
 
         // Check if member data should be included
         if ($includeMemberData) {
-            $payload['member'] = [
-                'id'        => $member->ID,
+            $memberData = [
                 'email'     => $member->Email,
                 'firstName' => $member->FirstName,
                 'surname'   => $member->Surname
             ];
+
+            // Use UUID as identifier if available
+            if ($member->hasField('UUID') && $member->UUID) {
+                $memberData['uuid'] = $member->UUID;
+            } else {
+                $memberData['id'] = $member->ID; // Fallback
+            }
+
+            $payload['member'] = $memberData;
         }
 
         return $payload;

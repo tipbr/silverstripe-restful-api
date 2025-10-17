@@ -1,0 +1,6 @@
+---
+Name: restful-member-uuid
+---
+SilverStripe\Security\Member:
+  extensions:
+    - FullscreenInteractive\Restful\Extensions\MemberUuidExtension

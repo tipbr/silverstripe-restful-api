@@ -4,24 +4,26 @@ declare(strict_types=1);
 
 namespace FullscreenInteractive\Restful\Controllers;
 
-use ArrayAccess;
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
-use FullscreenInteractive\Restful\JWT\JWTUtils;
+use FullscreenInteractive\Restful\Traits\InputValidation;
+use FullscreenInteractive\Restful\Traits\JsonResponse;
+use FullscreenInteractive\Restful\Traits\JwtAuthentication;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Control\HTTPResponse_Exception;
-use SilverStripe\Core\Config\Config;
-use SilverStripe\Core\Injector\Injector;
-use SilverStripe\Model\List\PaginatedList;
-use SilverStripe\Model\List\SS_List;
-use SilverStripe\Security\IdentityStore;
-use SilverStripe\Security\Member;
-use SilverStripe\Security\Permission;
-use SilverStripe\Security\Security;
 
 class ApiController extends Controller
 {
+    use JwtAuthentication;
+    use JsonResponse;
+    use InputValidation;
+
+    /**
+     * Configuration for public actions that don't require authentication
+     *
+     * @var array
+     */
+    private static $public_actions = [];
+
     public function init()
     {
         parent::init();
@@ -91,257 +93,22 @@ class ApiController extends Controller
     }
 
     /**
-     * Outputs a successful response (200)
-     */
-    public function success(array $context = []): HTTPResponse
-    {
-        $this->getResponse()->setBody(json_encode(array_merge([
-            'timestamp' => time(),
-            'success' => 1
-        ], $context)));
-
-        return $this->getResponse();
-    }
-
-    /**
-     * Returns a error response.
-     */
-    public function failure(array $context = []): HTTPResponse
-    {
-        $response = $this->getResponse();
-
-        $response->setBody(json_encode(array_merge([
-            'timestamp' => time(),
-            'success' => 0
-        ], $context)));
-
-        if (isset($context['status_code'])) {
-            $response->setStatusCode($context['status_code']);
-        } else {
-            $response->setStatusCode(400);
-        }
-
-        return $response;
-    }
-
-    public function returnPaginated(
-        ArrayAccess $list,
-        ?callable $keyFunc = null,
-        ?callable $dataFunc = null,
-        ?int $pageLength = 100
-    ): HTTPResponse {
-        list($list, $output) = $this->prepPaginatedOutput($list, $keyFunc, $dataFunc, $pageLength);
-
-        return $this->returnArray([
-            'records' => $output,
-            'start' => $list->getPageStart(),
-            'limit' => $list->getPageLength(),
-            'total' => $list->getTotalItems(),
-            'more' => ($list->NextLink()) ? true : false
-        ]);
-    }
-
-
-    /**
-     * Returns a HTTP response with the provided data encoded as JSON.
-     */
-    public function returnArray(array $data): HTTPResponse
-    {
-        return $this->getResponse()->setBody(json_encode($data));
-    }
-
-
-    /**
-     * Convert a provided DataList to a PaginatedList and return the source.
-     */
-    public function prepList(SS_List $list, ?callable $keyFunc = null, ?callable $dataFunc = null): array
-    {
-        $output = [];
-
-        foreach ($list as $item) {
-            if ($dataFunc) {
-                $record = $dataFunc($item);
-            } elseif (is_array($item)) {
-                $record = $item;
-            } else {
-                $record = $item->toApi();
-            }
-
-            if ($keyFunc) {
-                $output[$keyFunc($item)] = $record;
-            } else {
-                $output[] = $record;
-            }
-        }
-
-        return [
-            $list,
-            $output
-        ];
-    }
-
-
-    /**
-     * Convert a provided List to a PaginatedList and return the source.
-     */
-    public function prepPaginatedOutput(
-        SS_List $list,
-        ?callable $keyFunc = null,
-        ?callable $dataFunc = null,
-        ?int $pageLength = null
-    ): array {
-        $list = PaginatedList::create($list, $this->request);
-
-        if ($pageLength) {
-            $list->setPageLength($pageLength);
-        }
-
-        $output = [];
-
-        foreach ($list as $item) {
-            if ($dataFunc) {
-                $record = $dataFunc($item);
-            } elseif (is_array($item)) {
-                $record = $item;
-            } else {
-                $record = $item->toApi();
-            }
-
-            if ($keyFunc) {
-                $output[$keyFunc($item)] = $record;
-            } else {
-                $output[] = $record;
-            }
-        }
-
-        return [
-            $list,
-            $output
-        ];
-    }
-
-    /**
-     * If this endpoint requires authorization then we want to get the member
-     * for the operation.
+     * Check if the current action is public (doesn't require authentication)
      *
-     * @throws HTTPResponse_Exception
+     * @param string $action
+     * @return bool
      */
-    public function ensureUserLoggedIn(?array $permissionCodes = null): Member
+    protected function isPublicAction(string $action): bool
     {
-        $token = JWT::decode(
-            $this->getJwt(),
-            new Key(
-                Config::inst()->get(JWTUtils::class, 'secret'),
-                'HS256'
-            )
-        );
-
-        $member = Member::get()->byID($token->memberId);
-
-        if ($member) {
-            if ($permissionCodes) {
-                if (!Permission::checkMember($member, $permissionCodes)) {
-                    return $this->httpError(401);
-                }
-            }
-
-            Injector::inst()->get(IdentityStore::class)->logIn($member);
-
-            Security::setCurrentUser($member);
-
-            return $member;
-        } else {
-            return $this->httpError(401);
-        }
+        $publicActions = $this->config()->get('public_actions');
+        return is_array($publicActions) && in_array($action, $publicActions);
     }
 
     /**
-     * Returns the JWT token from the Authorization header.
+     * Standardized HTTP error response
      *
-     * @throws HTTPResponse_Exception
-     */
-    public function getJwt(): string
-    {
-        $bearer = $this->getBearerToken();
-
-        if (!$bearer) {
-            return $this->httpError(401);
-        }
-
-        if (!JWTUtils::inst()->check($bearer)) {
-            return $this->httpError(401);
-        }
-
-        $token = JWT::decode(
-            $bearer,
-            new Key(
-                Config::inst()->get(JWTUtils::class, 'secret'),
-                'HS256'
-            )
-        );
-
-        $jwt = JWTUtils::inst()->renew($bearer);
-
-        if (!$jwt) {
-            return $this->httpError(401);
-        }
-
-        // Set the current user
-        $memberId = $token->memberId;
-        $member = Member::get()->byID($memberId);
-
-        if ($member) {
-            Injector::inst()->get(IdentityStore::class)->logIn($member);
-            Security::setCurrentUser($member);
-        }
-
-        return $jwt;
-    }
-
-
-    public function getAuthorizationHeader(): string
-    {
-        $header = '';
-
-        if ($auth = $this->getRequest()->getHeader('Authorization')) {
-            $header = trim($auth);
-        } elseif ($auth = $this->getRequest()->getHeader('HTTP_AUTHORIZATION')) {
-            $header = trim($auth);
-        } elseif (function_exists('apache_request_headers')) {
-            $requestHeaders = apache_request_headers();
-            $requestHeaders = array_combine(
-                array_map('ucwords', array_keys($requestHeaders)),
-                array_values($requestHeaders)
-            );
-
-            if (isset($requestHeaders['Authorization'])) {
-                $header = trim($requestHeaders['Authorization']);
-            }
-        }
-
-        return $header;
-    }
-
-    /**
-     * Returns the bearer token value from the Authorization Header
-     */
-    public function getBearerToken(): string
-    {
-        $headers = $this->getAuthorizationHeader();
-
-        if (!empty($headers)) {
-            if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
-                return $matches[1];
-            }
-        }
-
-        return '';
-    }
-
-    /**
      * @param int $errorCode
      * @param string $errorMessage
-     *
      * @throws HTTPResponse_Exception
      */
     public function httpError($errorCode = 404, $errorMessage = '')
@@ -354,15 +121,26 @@ class ApiController extends Controller
                 case 400:
                     $errorMessage = 'Bad Request';
                     break;
+                case 401:
+                    $errorMessage = 'Unauthorized';
+                    break;
+                case 403:
+                    $errorMessage = 'Forbidden';
+                    break;
                 default:
-                    $errorMessage = 'Permission denied resource';
+                    $errorMessage = 'An error occurred';
                     break;
             }
         }
 
+        // Standardized error format
         $body = json_encode([
-            'error' => $errorMessage,
-            'code' => $errorCode
+            'success' => false,
+            'timestamp' => time(),
+            'error' => [
+                'message' => $errorMessage,
+                'code' => $errorCode
+            ]
         ]);
 
         $response = HTTPResponse::create(
@@ -377,58 +155,6 @@ class ApiController extends Controller
         $err->setResponse($response);
 
         throw $err;
-    }
-
-    /**
-     * Returns a variable from the POST or GET vars
-     */
-    public function getVar(string $name): mixed
-    {
-        $key = strtolower($name);
-
-        return (isset($this->vars[$key])) ? $this->vars[$key] : null;
-    }
-
-    /**
-     * Checks if a variable exists in the POST or GET vars
-     */
-    public function hasVar(string $name): bool
-    {
-        $key = strtolower($name);
-
-        return (isset($this->vars[$key]));
-    }
-
-    /**
-     * Returns an array of all the variables listed from the POST or GET vars
-     *
-     * @throws HTTPResponse_Exception
-     */
-    public function ensureVars(?array $vars = [])
-    {
-        $output = [];
-
-        foreach ($vars as $k => $v) {
-            if ($v && is_callable($v)) {
-                if (!$this->hasVar($k) || !$v($this->getVar($k))) {
-                    throw $this->httpError(400, 'Missing required variable: ' . $k);
-                }
-
-                $output[] = $this->getVar($k);
-            } elseif (!$this->hasVar($v)) {
-                throw $this->httpError(400, 'Missing required variable: ' . $v);
-            } else {
-                $output[] = $this->getVar($v);
-            }
-        }
-
-        return $output;
-    }
-
-
-    public function returnJSON(mixed $value): HTTPResponse
-    {
-        return $this->getResponse()->setBody(json_encode($value));
     }
 
     /**
@@ -461,5 +187,7 @@ class ApiController extends Controller
         }
 
         $this->httpError(400, 'Request must be provided as a DELETE request');
+    }
+}
     }
 }
